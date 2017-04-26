@@ -1,10 +1,13 @@
 from torch import optim
 import torch.nn as nn
 from rasor_model import SquadModel
+from config import Config
 
-model = SquadModel(config)
+cfg = Config()
+model = SquadModel(cfg)
+print(model.parameters())
 loss_function = nn.CrossEntropyLoss()
-
+"""
 for it in training_data:
 
 	model.zero_grad()
@@ -13,14 +16,13 @@ for it in training_data:
 	input_data = #get input data	
 	a_target = #get target answers
 
-	scores = model(input_data)
 	max_scores, a_hats = torch.argmax(scores, 1)
 
 	optimizer = optim.Adam(model.parameters())
 	loss = loss_function(a_hats, a_target)
 	loss.backward()
 	optimizer.step()
-
+"""
 def _np_ans_word_idxs_to_ans_idx(ans_start_word_idx, ans_end_word_idx, max_ans_len):
 	# all arguments are concrete ints
 	"""

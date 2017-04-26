@@ -11,7 +11,7 @@ import torch.nn.functional as F
 
 class SquadModel(nn.Module):		
 	#check if this vocab_size contains unkown, START, END token as well?
-	def __init__(self, config):
+	def __init__(self, config, emb_data):
 		super(SquadModel, self).__init__()
 
 		#an embedding layer to lookup pre-trained word embeddings
