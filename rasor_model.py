@@ -1,7 +1,7 @@
 import unicodedata
 import string
 import re
-import random
+import random, numpy as np
 
 import torch
 import torch.nn as nn
@@ -9,34 +9,53 @@ from torch.autograd import Variable
 from torch import optim
 import torch.nn.functional as F
 
-class GRUModel(nn.Module):		
+class SquadModel(nn.Module):		
 	#check if this vocab_size contains unkown, START, END token as well?
-	def __init__(self, vocab_size, emb_dim, pretrained_weight):
-		super(GRUModel, self).__init__()
+	def __init__(self, config):
+		super(SquadModel, self).__init__()
 
-		embed = nn.Embedding(vocab_size, emb_dim)
-		embed.weight.requires_grad = False	#do not propagate into the pre-trained word embeddings
-		embed.weight.data.copy_(torch.from_numpy(pretrained_weight))
+		#an embedding layer to lookup pre-trained word embeddings
+		self.embed = nn.Embedding(config.vocab_size, config.emb_dim)
+		self.embed.weight.requires_grad = False	#do not propagate into the pre-trained word embeddings
+		self.embed.weight.data.copy_(torch.from_numpy(pretrained_weight))
 
-		p_emb = emb[p]        # (max_p_len, batch_size, emb_dim)
-		self.ff_align = nn.Linear(inp_dim, emb_dim)
+		#used for eq(6) does FFNN(p_i)*FFNN(q_j)
+		self.ff_align = nn.Linear(config.emb_dim, config.ff_dim)
 
+		#used for eq(2) does FFNN(h_a) in a simplified form so that it can be re-used,
+		#note: h_a = [u,v] where u and v are start and end words respectively
+		#we have 2*config.hidden_dim since we are using a bi-directional LSTM
 		self.p_end_ff = nn.Linear(2*config.hidden_dim, config.ff_dim)
 		self.p_start_ff = nn.Linear(2*config.hidden_dim, config.ff_dim)
 
-		self.w_a_start = nn.Linear(config.ff_dim, 1, bias=False)
-		self.w_a_end   = nn.Linear(config.ff_dim, 1, bias=False)
+		#used for eq(2) plays the role of w_a
+		self.w_a = nn.Linear(config.ff_dim, 1, bias=False)
 
 		self.relu = nn.ReLU()
 		self.softmax = nn.Softmax()
-		self.cross_ent_loss = nn.CrossEntropyLoss()
-		self.gru = nn.GRU(2*config.emb_dim, config.hidden_dim, 2, 0.1, bidirectional = True)
 
-	def forward(self):
-		p_emb = emb[p]	#(max_p_len, batch_size, emb_dim)
-		q_emb = emb[q]	#(max_q_len, batch_size, emb_dim)
+		self.hidden = self.init_hidden(config.num_layers, config.hidden_dim, config.batch_size)
+		#since we are using q_align and p_emb as p_star we have input as 2*emb_dim
+		#num_layers = 2 and dropout = 0.1
+		self.gru = nn.GRU(2*config.emb_dim, config.hidden_dim, config.num_bilstm_layers, 0.1, bidirectional = True)
 
-		p_star_parts = [p_emb]
+	def forward(self, p, p_mask, q, q_mask):
+		#p is (max_p_len, batch_size)
+		#q is (max_q_len, batch_size)
+
+		#pytroch embedding layer contract
+		#Input: LongTensor (N, W), N = mini-batch, W = number of indices to extract per mini-batch
+		#Output: (N, W, embedding_dim)
+
+		p_emb = self.embed(p.transpose(0,1))
+		p_emb = p_emb.permute(1, 0, 2)
+		q_emb = self.embed(q.transpose(0,1))
+		q_emb = q_emb.permute(1, 0, 2)
+
+		# p_emb (max_p_len, batch_size, emb_dim)
+		# q_emb (max_q_len, batch_size, emb_dim)
+	
+		p_star_parts = [p_emb]	#its a list,later we concatenate them into a tensor/variable
 		p_star_dim = config.emb_dim
 
 		q_align_ff_p = self.sequence_linear_layer(self.ff_align, p_emb) #(max_p_len, batch_size, ff_dim)
@@ -47,11 +66,11 @@ class GRUModel(nn.Module):
 
 		q_align_scores = torch.bmm(q_align_ff_p_shuffled, q_align_ff_q_shuffled)	#(batch_size, max_p_len, max_q_len)
 
-		#float_p_mask has dimensions (max_p_len, batch_size)
-		p_mask_shuffled = torch.unsqueeze(float_p_mask, 2)	#results in (max_p_len, batch_size, 1)
+		#p_mask has dimensions (max_p_len, batch_size)
+		p_mask_shuffled = torch.unsqueeze(p_mask, 2)	#results in (max_p_len, batch_size, 1)
 		p_mask_shuffled = p_mask_shuffled.permute(1, 0, 2)	#(batch_size, max_p_len, 1)
 
-		q_mask_shuffled = torch.unsqueeze(float_q_mask, 2)	#results in (max_q_len, batch_size, 1)
+		q_mask_shuffled = torch.unsqueeze(q_mask, 2)	#results in (max_q_len, batch_size, 1)
 		q_mask_shuffled = q_mask_shuffled.permute(1, 0, 2)	#(batch_size, max_q_len, 1)
 
 		pq_mask = torch.bmm(p_mask_shuffled, q_mask_shuffled)	#(batch_size, max_p_len, max_q_len)
@@ -69,22 +88,21 @@ class GRUModel(nn.Module):
 
 		p_star = torch.cat(p_star_parts, 2)	#(max_p_len, batch_size, p_star_dim)
 
-		p_level_h = self.gru(p_star)
+		p_level_h, self.hidden = self.gru(p_star, self.hidden)	#(max_p_len, batch_size, 2*hidden_dim)
 
-		p_stt_ff = self.sequence_linear_layer(self.p_start_ff, p_level_h)	#(max_p_len, batch_size, ff_dim)
-		p_end_ff = self.sequence_linear_layer(self.p_end_ff, p_level_h)		#(max_p_len, batch_size, ff_dim)
+		p_stt_lin = self.sequence_linear_layer(self.p_start_ff, p_level_h)	#(max_p_len, batch_size, ff_dim)
+		p_end_lin = self.sequence_linear_layer(self.p_end_ff, p_level_h)		#(max_p_len, batch_size, ff_dim)
 
-		word_start_scores = self.sequence_linear_layer(self.w_a_start, p_stt_ff)	#(max_p_len, batch_size)
-		word_end_scores = self.sequence_linear_layer(self.w_a_end, p_end_ff)		#(max_p_len, batch_size)
+		#(batch_size, max_p_len*max_ans_len, ff_dim), (batch_size, max_p_len*max_ans_len)
+		span_lin_reshaped, span_masks_reshaped = self._span_sums(p_stt_lin, p_end_lin, p_lens, max_p_len, batch_size, ff_dim, config.max_ans_len)
+		
+		span_ff_reshaped = self.relu(span_lin_reshaped)	#(batch_size, max_p_len*max_ans_len, ff_dim)
+		span_scores_reshaped = self.sequence_linear_layer(self.w_a, span_ff_reshaped) #(batch_size, max_p_len*max_ans_len)
 
-		start_log_probs = self.cross_ent_loss(torch.transpose(word_start_scores, 0, 1))
-		end_log_probs = self.cross_ent_loss(torch.transpose(word_end_scores, 0, 1))
-
-		loss = -start_log_probs - end_log_probs
-		loss = torch.mean(loss)
-
-	def backward(self):
-
+		#(batch_size,) (batch_size,) (batch_size,)
+		xents, accs, a_hats = self.span_multinomial_classification(span_scores_reshaped, span_masks_reshaped, a)
+		
+		return a_hats
 
 	#input has dimension (sequence_len, batch_size, input_dim)
 	def sequence_linear_layer(self, layer, inp):
@@ -95,3 +113,20 @@ class GRUModel(nn.Module):
 			out_i = self.relu(layer(inp_i))
 			out.append(out_i)
 		return torch.stack(out, 0)
+
+	def init_hidden(self, num_layers, hidden_dim, batch_size):
+		"""
+		h_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial hidden state for each element in the batch.
+		"""
+		return Variable(torch.zeros(num_layers*num_directions, batch_size, hidden_dim))
+
+	def _span_sums(self, stt, end, max_p_len, batch_size, dim, max_ans_len):
+		max_ans_len_range = torch.from_numpy(np.arange(max_ans_len))
+		max_ans_len_range = max_ans_len_range.unsqueeze(0)		#(1, max_ans_len) is a vector like [0,1,2,3,4....,max_ans_len-1]
+
+		offsets = torch.from_numpy(np.arange(max_p_len))		
+		offsets = offsets.unsqueeze(0)	#(1, max_p_len) is a vector like (0,1,2,3,4....max_p_len-1)
+		offsets = offsets.tranpose(0,1) #(max_p_len, 1) is row vector now like [0/1/2/3...max_p_len-1]
+
+		end_idxs = max_ans_len_range.expand(offsets.size(0), max_ans_len_range.size(1)) + offsets.expand(offsets.size(0), max_ans_len_range.size(1))
+		end_idxs_flat = end_idxs.
