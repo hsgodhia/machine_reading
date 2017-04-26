@@ -38,8 +38,10 @@ class SquadModel(nn.Module):
 		#since we are using q_align and p_emb as p_star we have input as 2*emb_dim
 		#num_layers = 2 and dropout = 0.1
 		self.gru = nn.GRU(2*config.emb_dim, config.hidden_dim, config.num_bilstm_layers, 0.1, bidirectional = True)
+		self.cross_ents = nn.CrossEntropyLoss()		
 
-	def forward(self, p, p_mask, q, q_mask):
+	def forward(self, p, p_mask, p_lens, q, q_mask, q_lens):
+		max_p_len, max_q_len = p_lens.max(), q_lens.max()
 		#p is (max_p_len, batch_size)
 		#q is (max_q_len, batch_size)
 
@@ -94,15 +96,13 @@ class SquadModel(nn.Module):
 		p_end_lin = self.sequence_linear_layer(self.p_end_ff, p_level_h)		#(max_p_len, batch_size, ff_dim)
 
 		#(batch_size, max_p_len*max_ans_len, ff_dim), (batch_size, max_p_len*max_ans_len)
-		span_lin_reshaped, span_masks_reshaped = self._span_sums(p_stt_lin, p_end_lin, p_lens, max_p_len, batch_size, ff_dim, config.max_ans_len)
+		span_lin_reshaped, span_masks_reshaped = self._span_sums(p_stt_lin, p_end_lin, p_lens, max_p_len, config.batch_size, config.ff_dim, config.max_ans_len)
 		
 		span_ff_reshaped = self.relu(span_lin_reshaped)	#(batch_size, max_p_len*max_ans_len, ff_dim)
 		span_scores_reshaped = self.sequence_linear_layer(self.w_a, span_ff_reshaped) #(batch_size, max_p_len*max_ans_len)
 
-		#(batch_size,) (batch_size,) (batch_size,)
-		xents, accs, a_hats = self.span_multinomial_classification(span_scores_reshaped, span_masks_reshaped, a)
-		
-		return a_hats
+		final_span_scores = span_masks_reshaped * span_scores_reshaped
+		return final_span_scores
 
 	#input has dimension (sequence_len, batch_size, input_dim)
 	def sequence_linear_layer(self, layer, inp):
@@ -121,6 +121,10 @@ class SquadModel(nn.Module):
 		return Variable(torch.zeros(num_layers*num_directions, batch_size, hidden_dim))
 
 	def _span_sums(self, stt, end, max_p_len, batch_size, dim, max_ans_len):
+		# stt 		(max_p_len, batch_size, dim)
+		# end 		(max_p_len, batch_size, dim)
+		# p_lens 	(batch_size,)
+
 		max_ans_len_range = torch.from_numpy(np.arange(max_ans_len))
 		max_ans_len_range = max_ans_len_range.unsqueeze(0)		#(1, max_ans_len) is a vector like [0,1,2,3,4....,max_ans_len-1]
 
@@ -129,4 +133,23 @@ class SquadModel(nn.Module):
 		offsets = offsets.tranpose(0,1) #(max_p_len, 1) is row vector now like [0/1/2/3...max_p_len-1]
 
 		end_idxs = max_ans_len_range.expand(offsets.size(0), max_ans_len_range.size(1)) + offsets.expand(offsets.size(0), max_ans_len_range.size(1))
-		end_idxs_flat = end_idxs.
+		end_idxs_flat = end_idxs.view(-1, 1).squeeze(1)	#(max_p_len*max_ans_len, ) 
+		#note: this is not modeled as tensor of size (SZ, 1) but vector of SZ size
+
+		end_padded = torch.cat(end, torch.zeros(max_ans_len - 1, batch_size, dim))
+		end_structed = end_padded[end_idxs_flat]		#(max_p_len*max_ans_len, batch_size, dim)
+		end_structed = end_structed.view(max_p_len, max_ans_len, batch_size, dim)
+		stt_shuffled = stt.unsqueeze(1)		# stt (max_p_len, 1, batch_size, dim)
+
+		#since the FFNN(h_a) * W we expand h_a as [p_start, p_end]*[w_1 w_2] so this reduces to p_start*w_1 + p_end*w_2
+		#now we can reuse the operations, we compute only once
+		span_sums = stt_shuffled.expand(max_p_len, max_ans_len, batch_size, dim) + end_structed
+		#(max_p_len, max_ans_len, batch_size, dim)
+		span_sums_reshapped = span_sums.permute(2,0,1,3).view(batch_size, max_ans_len*max_p_len, dim)
+
+		p_lens_shuffled = p_lens.unsqueeze(1)
+		end_idxs_flat_shuffled = end_idxs_flat.unsqueeze(0)
+
+		span_masks_reshaped = end_idxs_flat_shuffled.expand(p_lens_shuffled.size(0), end_idxs_flat_shuffled.size(1)) < p_lens_shuffled.expand(p_lens_shuffled.size(0), end_idxs_flat_shuffled.size(1))
+
+		return span_sums_reshapped, span_masks_reshaped

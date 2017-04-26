@@ -10,10 +10,11 @@ for it in training_data:
 	model.zero_grad()
 	model.hidden = model.init_hidden()
 
-	input_data = #get input data
-
-	a_hats = model(input_data) 
+	input_data = #get input data	
 	a_target = #get target answers
+
+	scores = model(input_data)
+	max_scores, a_hats = torch.argmax(scores, 1)
 
 	optimizer = optim.Adam(model.parameters())
 	loss = loss_function(a_hats, a_target)
