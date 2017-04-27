@@ -3,7 +3,7 @@ import string
 import re
 import random, numpy as np
 
-import torch
+import torch, pdb
 import torch.nn as nn
 from torch.autograd import Variable
 from torch import optim
@@ -13,11 +13,11 @@ class SquadModel(nn.Module):
 	#check if this vocab_size contains unkown, START, END token as well?
 	def __init__(self, config, emb_data):
 		super(SquadModel, self).__init__()
-
+		pdb.set_trace()
 		#an embedding layer to lookup pre-trained word embeddings
 		self.embed = nn.Embedding(config.vocab_size, config.emb_dim)
 		self.embed.weight.requires_grad = False	#do not propagate into the pre-trained word embeddings
-		self.embed.weight.data.copy_(torch.from_numpy(pretrained_weight))
+		self.embed.weight.data.copy_(emb_data)
 
 		#used for eq(6) does FFNN(p_i)*FFNN(q_j)
 		self.ff_align = nn.Linear(config.emb_dim, config.ff_dim)
@@ -40,7 +40,7 @@ class SquadModel(nn.Module):
 		self.gru = nn.GRU(2*config.emb_dim, config.hidden_dim, config.num_bilstm_layers, 0.1, bidirectional = True)
 		self.cross_ents = nn.CrossEntropyLoss()		
 
-	def forward(self, p, p_mask, p_lens, q, q_mask, q_lens):
+	def forward(self, config,p, p_mask, p_lens, q, q_mask, q_lens):
 		max_p_len, max_q_len = p_lens.max(), q_lens.max()
 		#p is (max_p_len, batch_size)
 		#q is (max_q_len, batch_size)
@@ -118,7 +118,7 @@ class SquadModel(nn.Module):
 		"""
 		h_0 (num_layers * num_directions, batch, hidden_size): tensor containing the initial hidden state for each element in the batch.
 		"""
-		return Variable(torch.zeros(num_layers*num_directions, batch_size, hidden_dim))
+		return Variable(torch.zeros(num_layers*2, batch_size, hidden_dim))
 
 	def _span_sums(self, stt, end, max_p_len, batch_size, dim, max_ans_len):
 		# stt 		(max_p_len, batch_size, dim)

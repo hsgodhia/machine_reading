@@ -4,6 +4,7 @@ from rasor_model import SquadModel
 import sys
 import logging
 import time
+from torch.autograd import Variable
 import argparse
 import torch
 import numpy as np
@@ -28,31 +29,58 @@ class Config(object):
 		self.tst_load_model_path = None         # path of trained model data, used for producing test set predictions
 		self.tst_split = True                   # whether to split hyphenated unknown words of test set, see setup.py
 
+		self.seed = np.random.random_integers(1e6, 1e9)
 		self.max_ans_len = 30                   # maximal answer length, answers of longer length are discarded
 		self.emb_dim = 300                      # dimension of word embeddings
+		self.learn_single_unk = False           # whether to have a single tunable word embedding for all unknown words
+												# (or multiple fixed random ones)
+		self.init_scale = 5e-3                  # uniformly random weights are initialized in [-init_scale, +init_scale]
+		self.learning_rate = 1e-3
+		self.lr_decay = 0.95
+		self.lr_decay_freq = 5000               # frequency with which to decay learning rate, measured in updates
+		self.max_grad_norm = 10                 # gradient clipping
+		self.ff_dims = [100]                    # dimensions of hidden FF layers
+		self.ff_dim = 100
+		self.ff_drop_x = 0.2                    # dropout rate of FF layers
+		self.batch_size = 40
+		self.max_num_epochs = 150               # max number of epochs to train for
 
-		self.ff_dims = 100                      # dimensions of hidden FF layers
-		self.batch_size = 100
-		self.max_num_epochs = 20               # max number of epochs to train for
-
-		self.num_bilstm_layers = 1              # number of BiLSTM layers, where BiLSTM is applied
+		self.num_bilstm_layers = 2              # number of BiLSTM layers, where BiLSTM is applied
+		self.num_layers = 2
 		self.hidden_dim = 100                   # dimension of hidden state of each uni-directional LSTM
-		# -- aded some new configs
-		self.vocab_size = 1000
+		self.lstm_drop_h = 0.1                  # dropout rate for recurrent hidden state of LSTM
+		self.lstm_drop_x = 0.4                  # dropout rate for inputs of LSTM
+		self.lstm_couple_i_and_f = True         # customizable LSTM configuration, see base/model.py
+		self.lstm_learn_initial_state = False
+		self.lstm_tie_x_dropout = True
+		self.lstm_sep_x_dropout = False
+		self.lstm_sep_h_dropout = False
+		self.lstm_w_init = 'uniform'
+		self.lstm_u_init = 'uniform'
+		self.lstm_forget_bias_init = 'uniform'
+		self.default_bias_init = 'uniform'
 
-		#assert all(k in self.__dict__ for k in kwargs)
-		#assert all(k in self.__dict__ for k in compared)
+		self.extra_drop_x = 0                   # dropout rate at an extra possible place
+		self.q_aln_ff_tie = True                # whether to tie the weights of the FF over question and the FF over passage
+		self.sep_stt_end_drop = True            # whether to have separate dropout masks for span start and
+												# span end representations
+
+		self.adam_beta1 = 0.9                   # see base/optimizer.py
+		self.adam_beta2 = 0.999
+		self.adam_eps = 1e-8
+
+		self.objective = 'span_multinomial'     # 'span_multinomial': multinomial distribution over all spans
+												# 'span_binary':      logistic distribution per span
+												# 'span_endpoints':   two multinomial distributions, over span start and end
+
+		self.ablation = 'only_q_align'                    # 'only_q_align':     question encoded only by passage-aligned representation
+												# 'only_q_indep':     question encoded only by passage-independent representation
+												# None:               question encoded by both
+		self.vocab_size = 114885
+		assert all(k in self.__dict__ for k in kwargs)
+		assert all(k in self.__dict__ for k in compared)
 		self.__dict__.update(kwargs)
 		self._compared = compared
-
-	def __repr__(self):
-		ks = sorted(k for k in self.__dict__ if k not in ['name', 'desc', '_compared'])
-		return '\n'.join('{:<30s}{:<s}'.format(k, str(self.__dict__[k])) for k in ks)
-
-	def format_compared(self):
-		return '\n'.join([
-			''.join('{:12s} '.format(k[:12]) for k in sorted(self._compared)),
-			''.join('{:12s} '.format(str(self.__dict__[k])[:12]) for k in sorted(self._compared))])
 
 
 def _get_configs():
@@ -143,7 +171,7 @@ def _gpu_dataset(name, dataset, config):
 		ds_vec = dataset.vectorized
 		ctxs, ctx_masks, ctx_lens = _gpu_sequences(name + '_ctxs', ds_vec.ctxs, ds_vec.ctx_lens)
 		qtns, qtn_masks, qtn_lens = _gpu_sequences(name + '_qtns', ds_vec.qtns, ds_vec.qtn_lens)
-		qtn_ctx_idxs = ds_vec.qtn_ctx_idxs
+		qtn_ctx_idxs = torch.from_numpy(ds_vec.qtn_ctx_idxs)
 		anss, ans_stts, ans_ends = _gpu_answers(name, ds_vec.anss, config.max_ans_len)
 	else:
 		ctxs = ctx_masks = qtns = qtn_masks = torch.zeros(1,1)
@@ -210,33 +238,34 @@ trn_ctxs, trn_ctx_masks, trn_ctx_lens, trn_qtns, trn_qtn_masks, trn_qtn_lens, tr
 
 #tst_ctxs, tst_ctx_masks, tst_ctx_lens, tst_qtns, tst_qtn_masks, tst_qtn_lens, tst_qtn_ctx_idxs,tst_anss, tst_ans_stts, tst_ans_ends = _gpu_dataset('tst', data.tst, config)
 
-dataset_ctxs= trn_ctxs
-dataset_ctx_masks= trn_ctx_masks
-dataset_ctx_lens= trn_ctx_lens
-dataset_qtns = trn_qtns
-dataset_qtn_masks =  trn_qtn_masks
-dataset_qtn_lens = trn_qtn_lens
-dataset_qtn_ctx_idxs =  trn_qtn_ctx_idxs
-dataset_anss =  trn_anss
-dataset_ans_stts =  trn_ans_stts
-dataset_ans_ends = trn_ans_ends
+dataset_ctxs= trn_ctxs.long()
+dataset_ctx_masks= trn_ctx_masks.long()
+dataset_ctx_lens= trn_ctx_lens.long()
+dataset_qtns = trn_qtns.long()
+dataset_qtn_masks =  trn_qtn_masks.long()
+dataset_qtn_lens = trn_qtn_lens.long()
+dataset_qtn_ctx_idxs =  trn_qtn_ctx_idxs.long()
+dataset_anss =  trn_anss.long()
+dataset_ans_stts =  trn_ans_stts.long()
+dataset_ans_ends = trn_ans_ends.long()
 
 
 model = SquadModel(config,emb)
+print(model.parameters())
 loss_function = nn.CrossEntropyLoss()
 
 def get_batched_data(qnt_idx):
 	ctx_idxs = dataset_qtn_ctx_idxs[qtn_idxs]                   # (batch_size,)
 	p_lens = dataset_ctx_lens[ctx_idxs]                         # (batch_size,)
 	max_p_len = p_lens.max()
-	p = dataset_ctxs[ctx_idxs][:,:max_p_len].T                  # (max_p_len, batch_size)
-	p_mask = dataset_ctx_masks[ctx_idxs][:,:max_p_len].T        # (max_p_len, batch_size)
+	p = dataset_ctxs[ctx_idxs][:,:max_p_len].transpose(0,1)                 # (max_p_len, batch_size)
+	p_mask = dataset_ctx_masks[ctx_idxs][:,:max_p_len].transpose(0,1)       # (max_p_len, batch_size)
 	float_p_mask = p_mask.float()
 
 	q_lens = dataset_qtn_lens[qtn_idxs]                         # (batch_size,)
 	max_q_len = q_lens.max()
-	q = dataset_qtns[qtn_idxs][:,:max_q_len].T                  # (max_q_len, batch_size)
-	q_mask = dataset_qtn_masks[qtn_idxs][:,:max_q_len].T        # (max_q_len, batch_size)
+	q = dataset_qtns[qtn_idxs][:,:max_q_len].transpose(0,1)                 # (max_q_len, batch_size)
+	q_mask = dataset_qtn_masks[qtn_idxs][:,:max_q_len].transpose(0,1)        # (max_q_len, batch_size)
 	float_q_mask = q_mask.float()
 
 	a = dataset_anss[qtn_idxs]                                  # (batch_size,)
@@ -244,11 +273,11 @@ def get_batched_data(qnt_idx):
 	a_end = dataset_ans_ends[qtn_idxs]                          # (batch_size,)
 		
 
-def _trn_epoch(config, model, data, epoch, np_rng):
+def _trn_epoch():
 	logger = logging.getLogger()
 	# indices of questions which have a valid answer
 	valid_qtn_idxs = np.flatnonzero(data.trn.vectorized.qtn_ans_inds).astype(np.int32)
-	np_rng.shuffle(valid_qtn_idxs)
+	# todo shuffle in numpy np_rng.shuffle(valid_qtn_idxs)
 	num_samples = valid_qtn_idxs.size
 	batch_sizes = []
 	losses = []
@@ -258,18 +287,18 @@ def _trn_epoch(config, model, data, epoch, np_rng):
 	for b, s in enumerate(ss, 1):
 
 		batch_idxs = valid_qtn_idxs[s:min(s+config.batch_size, num_samples)]
-		qtn_idxs = batch_idxs
-		ctx_idxs = dataset_qtn_ctx_idxs[qtn_idxs]                   # (batch_size,)
+		qtn_idxs = torch.from_numpy(batch_idxs).long()
+		ctx_idxs = dataset_qtn_ctx_idxs[qtn_idxs].long()                   # (batch_size,)
 		p_lens = dataset_ctx_lens[ctx_idxs]                         # (batch_size,)
 		max_p_len = p_lens.max()
-		p = dataset_ctxs[ctx_idxs][:,:max_p_len].T                  # (max_p_len, batch_size)
-		p_mask = dataset_ctx_masks[ctx_idxs][:,:max_p_len].T        # (max_p_len, batch_size)
+		p = dataset_ctxs[ctx_idxs][:,:max_p_len].transpose(0,1)                 # (max_p_len, batch_size)
+		p_mask = dataset_ctx_masks[ctx_idxs][:,:max_p_len].transpose(0,1).long()        # (max_p_len, batch_size)
 		float_p_mask = p_mask.float()
 
 		q_lens = dataset_qtn_lens[qtn_idxs]                         # (batch_size,)
 		max_q_len = q_lens.max()
-		q = dataset_qtns[qtn_idxs][:,:max_q_len].T                  # (max_q_len, batch_size)
-		q_mask = dataset_qtn_masks[qtn_idxs][:,:max_q_len].T        # (max_q_len, batch_size)
+		q = dataset_qtns[qtn_idxs][:,:max_q_len].transpose(0,1)                # (max_q_len, batch_size)
+		q_mask = dataset_qtn_masks[qtn_idxs][:,:max_q_len].transpose(0,1).long()        # (max_q_len, batch_size)
 		float_q_mask = q_mask.float()
 
 		a = dataset_anss[qtn_idxs]                                  # (batch_size,)
@@ -281,9 +310,9 @@ def _trn_epoch(config, model, data, epoch, np_rng):
 		start_time = time.time()
 
 		model.zero_grad()
-		model.hidden = model.init_hidden()
+		model.hidden = model.init_hidden(config.num_layers, config.hidden_dim, config.batch_size)
 
-		a_hats = model(p, p_mask, p_lens, q, q_mask, q_lens) 
+		a_hats = model(config,Variable(p, requires_grad=False), Variable(p_mask, requires_grad=False), Variable(p_lens, requires_grad=False), Variable(q, requires_grad=False), Variable(q_mask, requires_grad=False), Variable(q_lens, requires_grad=False)) 
 
 		optimizer = optim.Adam(model.parameters())
 		loss = loss_function(a_hats, a)
@@ -307,6 +336,9 @@ def _trn_epoch(config, model, data, epoch, np_rng):
 	trn_acc = np.average(accs, weights=batch_sizes)
 	trn_samples_per_sec = np.average(samples_per_sec, weights=batch_sizes)
 	return trn_loss, trn_acc, trn_samples_per_sec
+
+
+_trn_epoch()
 
 
 

@@ -1,0 +1,560 @@
+2017-04-26 20:11:37,725    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+batch_size                    100
+device                        cpu
+emb_dim                       300
+ff_dims                       100
+hidden_dim                    100
+max_ans_len                   30
+max_num_epochs                20
+num_bilstm_layers             1
+objective                     span_multinomial
+plot                          True
+pred_json_path                None
+save_freq                     None
+test_json_path                None
+tokenized_dev_json_path       data/dev-v1.1.tokenized.split.json
+tokenized_trn_json_path       data/train-v1.1.tokenized.split.json
+tst_load_model_path           models/RaSoR_cfg0_best_em.pkl
+tst_split                     True
+vocab_size                    1000
+word_emb_data_path_prefix     data/preprocessed_glove_with_unks.split
+
+2017-04-26 20:11:47,109    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:11:53,412    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:11:54,277    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:15:49,520    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f5a0dc78ed0>
+
+2017-04-26 20:15:53,652    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:15:59,409    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:16:00,256    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:16:00,565    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:16:02,232    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:16:02,429    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:16:26,050    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fe89c70ced0>
+
+2017-04-26 20:16:29,761    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:16:35,375    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:16:36,143    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:16:36,449    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:16:38,136    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:16:38,341    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:17:10,189    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f73417ace90>
+
+2017-04-26 20:17:14,491    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:17:20,266    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:17:21,104    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:17:21,400    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:17:23,073    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:17:23,270    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:17:53,975    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f527f348e90>
+
+2017-04-26 20:17:57,200    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:18:02,870    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:18:03,673    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:18:03,989    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:18:05,649    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:18:05,853    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:18:42,490    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f1077d91d50>
+
+2017-04-26 20:18:46,034    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:18:51,719    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:18:52,534    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:18:52,833    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:18:54,479    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:18:54,678    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:21:48,025    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f9c70759d50>
+
+2017-04-26 20:21:57,164    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:22:03,985    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:22:04,818    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:22:05,161    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:22:06,925    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:22:07,140    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:23:27,915    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f3deb163d50>
+
+2017-04-26 20:23:37,572    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:23:43,928    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:23:44,819    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:23:45,139    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:23:46,876    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:23:47,113    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:24:14,509    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f8b4d547d50>
+
+2017-04-26 20:24:24,313    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:24:30,492    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:24:31,361    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:24:31,692    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:24:33,417    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:24:33,635    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:25:19,320    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f07caf5ed10>
+
+2017-04-26 20:25:28,931    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:25:35,135    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:25:36,011    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:25:36,312    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:25:38,043    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:25:38,265    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:26:44,874    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fd744f22d10>
+
+2017-04-26 20:26:54,709    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:27:00,912    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:27:01,772    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:27:02,106    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:27:03,827    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:27:04,060    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:31:10,835    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f6848562d10>
+
+2017-04-26 20:31:20,093    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:31:26,289    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:31:27,145    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:31:27,472    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:31:29,210    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:31:29,423    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:32:34,004    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fd459d56d10>
+
+2017-04-26 20:32:42,977    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:32:49,032    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:32:49,875    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:32:50,218    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:32:51,963    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:32:52,179    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:36:02,503    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fd4cc2ebd10>
+
+2017-04-26 20:36:11,444    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:36:17,650    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:36:18,542    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:36:18,878    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:36:20,605    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:36:20,820    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:38:06,896    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fc41081ad10>
+
+2017-04-26 20:38:16,191    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:38:23,145    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:38:24,022    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:38:24,356    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:38:26,075    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:38:26,290    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:39:23,646    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fdf4f2bed10>
+
+2017-04-26 20:39:33,009    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:39:40,584    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:39:41,428    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:39:41,756    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:39:43,558    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:39:43,761    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:40:28,720    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fa22d858d10>
+
+2017-04-26 20:40:38,305    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:40:44,638    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:40:45,503    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:40:45,840    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:40:47,550    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:40:47,751    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:42:11,773    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f4bf5d64d10>
+
+2017-04-26 20:42:21,185    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:42:27,393    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:42:28,372    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:42:28,705    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:42:30,424    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:42:30,630    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:43:43,269    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f17319b6d10>
+
+2017-04-26 20:43:52,434    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:43:59,536    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:44:00,528    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:44:00,860    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:44:02,837    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:44:03,059    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:45:29,418    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f27f025dd50>
+
+2017-04-26 20:45:37,896    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:45:44,271    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:45:45,174    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:45:45,552    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:45:47,291    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:45:47,520    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 20:52:01,408    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f63a6c0ed50>
+
+2017-04-26 20:52:09,825    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 20:52:16,236    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 20:52:17,083    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 20:52:17,403    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 20:52:19,138    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 20:52:19,360    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 21:00:03,121    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f762519bd10>
+
+2017-04-26 21:00:12,886    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 21:00:19,442    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 21:00:20,362    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 21:00:20,691    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 21:00:22,436    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 21:00:22,651    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 21:02:07,946    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7f8398362d10>
+
+2017-04-26 21:02:17,195    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 21:02:23,404    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 21:02:24,280    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 21:02:24,610    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 21:02:26,355    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 21:02:26,578    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
+2017-04-26 21:13:42,590    START train_main.py: RaSoR (Recurrent span representations) config index 0
+
+<__main__.Config object at 0x7fb8c2e6fd10>
+
+2017-04-26 21:13:51,397    Read word embedding data from:
+	data/preprocessed_glove_with_unks.split.metadata.pkl
+	data/preprocessed_glove_with_unks.split.emb.npy
+2017-04-26 21:13:57,756    Processed data/train-v1.1.tokenized.split.json:
+	total 87599 questions, 708 invalid questions, total 87599 answers, 662 invalid answers, 46 too long answers
+	{x: num of questions having x answers}: {1: 87599}
+2017-04-26 21:13:58,620    Processed data/dev-v1.1.tokenized.split.json:
+	total 10570 questions, 40 invalid questions, total 34726 answers, 328 invalid answers, 3 too long answers
+	{x: num of questions having x answers}: {1: 3, 2: 136, 3: 8490, 4: 759, 5: 1147, 6: 35}
+2017-04-26 21:13:58,946    Contracted word embeddings (multiple embeddings for unknown word-types):
+	100660 known word-types, 14223 pre-existing unknown word-types, 0 new unknown word-types
+2017-04-26 21:14:00,661    Vectorized train samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    33   39   54   75   95   105  114  125  137  152  173  208  243  323  808  
+	qtn length:    5    6    6    7    8    9    10   11   12   13   14   16   18   23   60   
+2017-04-26 21:14:00,868    Vectorized dev samples. Lengths:
+	percentile:    1    2    5    10   20   30   40   50   60   70   80   90   95   99   100  
+	ctx length:    37   46   66   88   99   108  118  128  142  156  176  214  246  376  704  
+	qtn length:    5    5    6    7    8    9    10   11   12   13   14   16   18   23   34   
